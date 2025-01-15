@@ -1,0 +1,237 @@
+openapi: 3.0.0
+info:
+  title: URL Shortener API
+  description: API documentation for URL Shortener service.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/v1
+paths:
+  /generateshorturl:
+    post:
+      operationId: generateShortUrl
+      tags:
+        - UrlShortner
+      summary: Generate a short URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                longUrl:
+                  type: string
+                customAlaisName:
+                  type: string
+                  example: acb
+                expiryDate:
+                  type: string
+                  example: 01/12/2025
+                clientId:
+                  type: string
+                  example: client123
+                status:
+                  type: string
+                  enum: [active, inactive]
+      responses:
+        '200':
+          description: Short URL generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateShortUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /modify-short-url:
+    patch:
+      operationId: modifyShortUrl
+      tags:
+        - UrlShortner
+      summary: Modify a short URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shortUrl:
+                  type: string
+                longUrl:
+                  type: string
+                customAlaisName:
+                  type: string
+                expiryDate:
+                  type: string
+                clientId:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Short URL modified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModifyShortUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /get-short-url-details:
+    get:
+      operationId: getShortUrlDetails
+      tags:
+        - UrlShortner
+      summary: Get details of a short URL
+      parameters:
+        - in: query
+          name: shortUrl
+          schema:
+            type: string
+          required: true
+          description: Short URL to fetch details for
+      responses:
+        '200':
+          description: Short URL details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShortUrlDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /get-custom-alias-details:
+    get:
+      operationId: getCustomAliasDetails
+      tags:
+        - UrlShortner
+      summary: Get details of a custom alias URL
+      parameters:
+        - in: query
+          name: customAlaisUrl
+          schema:
+            type: string
+          required: true
+          description: Custom alias URL to fetch details for
+      responses:
+        '200':
+          description: Custom alias URL details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomAliasDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /redirect:
+    get:
+      operationId: redirectUrl
+      tags:
+        - UrlShortner
+      summary: Redirect to the original URL
+      parameters:
+        - in: query
+          name: shortUrl
+          schema:
+            type: string
+          required: true
+          description: Short URL to redirect
+      responses:
+        '302':
+          description: Redirecting to the original URL
+components:
+  schemas:
+    GenerateShortUrlResponse:
+      type: object
+      properties:
+        customAlaisUrl:
+          type: string
+        shortUrl:
+          type: string
+    ModifyShortUrlResponse:
+      type: object
+      properties:
+        customAlaisUrl:
+          type: string
+        shortUrl:
+          type: string
+    GetShortUrlDetailsResponse:
+      type: object
+      properties:
+        shortUrl:
+          type: string
+        longUrl:
+          type: string
+        customAlaisName:
+          type: string
+        createdDate:
+          type: string
+        expiryDate:
+          type: string
+        clentId:
+          type: string
+        status:
+          type: string
+    GetCustomAliasDetailsResponse:
+      type: object
+      properties:
+        shortUrl:
+          type: string
+        longUrl:
+          type: string
+        customAlaisName:
+          type: string
+        clentId:
+          type: string
+        createdDate:
+          type: string
+        expiryDate:
+          type: string
+        status:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        errorDescription:
+          type: string
+        message:
+          type: string
